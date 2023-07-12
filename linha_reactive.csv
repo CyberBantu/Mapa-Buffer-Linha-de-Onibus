@@ -1,0 +1,73 @@
+﻿Linha/Serviço;Origem x Destino;Data;AP
+10;Bairro de Fátima - Central;06/07/2022;AP1
+12;Rodoviária - Castelo;12/09/2022;AP1
+14;Paula Matos - Castelo;01/06/2022;AP1
+104;São Conrado - Rodoviária;01/06/2022;AP2-AP1
+157;Gávea (PUC) - Castelo;25/07/2022;AP2-AP1
+201;Santa Alexandrina - Castelo;01/06/2022;AP1
+229;Usina - Castelo;15/08/2022;AP3-AP1
+254;Madureira - Candelária;01/09/2022;AP3-AP1
+277;Rocha Miranda - Candelária;01/08/2022;AP3-AP1
+301;Rodoviária - Barra da Tijuca;02/01/2023;AP1-AP4
+311;Engenheiro Leal - Candelária;04/07/2022;AP3-AP1
+349;Rocha Miranda - Castelo;23/06/2022;AP3-AP1
+388;Santa Cruz - Candelária;18/07/2022;AP5-AP1
+435;Grajaú - Gávea;06/07/2022;AP3-AP2
+448;Furnas - São Conrado;01/06/2022;AP4-AP2
+518;Urca - Botafogo;13/10/2022;AP2
+519;Urca - Copacabana;13/10/2022;AP2
+603;Usina - Saens Peña;20/06/2022;AP3
+605;Vila Isabel - Praça Saens Peña;25/07/2022;AP3
+626;Saens Peña - Muda;20/06/2022;AP3
+651;Méier - Cascadura;20/06/2022;AP3
+652;Méier - Cascadura;20/06/2022;AP3
+669;Pavuna - Méier;18/07/2022;AP3
+678;Méier - Vila Valqueire;19/09/2022;AP3-AP4
+702;Praça Seca - Madureira;19/10/2022;AP4-AP3
+709;Cascadura - Amarelinho;10/08/2022;AP3
+741;Terminal Sulacap - Bangu;07/07/2022;AP5
+743;Terminal Sulacap - Bangu;07/07/2022;AP5
+753;Santa Cruz - Coelho Neto;01/05/2023;AP5-AP3
+757;Sepetiba - Coelho Neto;02/05/2023;AP5-AP3
+778;Pavuna - Cascadura;01/06/2022;AP3
+785;Cascadura - Coelho Neto;12/09/2022;AP3
+808;Salim - Campo Grande;06/07/2022;AP5
+809;Sagrado Coração - Santa Cruz;08/09/2022;AP5
+817;Piabas - Vargem Grande;01/07/2022;AP4
+822;Campo Grande - Corcundinha;01/06/2022;AP5
+825;Campo Grande - Jesuítas;22/08/2022;AP5
+830;Pedregoso - Campo Grande;23/11/2022;AP5
+831;Colônia - Taquara;20/07/2022;AP4
+833;Conjunto Manguariba - Campo Grande;26/09/2022;AP5
+842;Paciência - Campo Grande;23/11/2022;AP5
+845;Cantagalo - Campo Grande;01/06/2022;AP5
+849;Base Aérea de Santa Cruz - Campo Grande;01/06/2022;AP5
+851;Campo Grande - Escola Amazonas;06/06/2022;AP5
+865;Pau da Fome - Taquara;25/07/2022;AP4
+870;Sepetiba - Santa Cruz;01/06/2022;AP5
+871;Terminal Pingo d'Água - Cesarão;01/06/2022;AP5
+880;Rio das Pedras - Riocentro;06/02/2023;AP4
+881;Taquara - Terminal Alvorada;01/06/2022;AP4
+885;Santa Cruz - Mato Alto;15/08/2022;AP5
+892;São Benedito - Santa Cruz;01/06/2022;AP5
+893;Jardim Palmares - Campo Grande;25/07/2022;AP5
+899;Barra de Guaratiba - Terminal Recreio;08/08/2022;AP5-AP4
+901;Bonsucesso - Bananal;18/10/2022;AP3-AP1
+915;Bonsucesso - Aeroporto Internacional;19/09/2022;AP3
+921;Bancários - Ribeira;16/06/2023;AP3
+922;Tubiacanga - RIOgaleão;01/06/2022;AP3
+925;Aeroporto Internacional - Bancários;01/06/2022;AP3
+928;Marechal Hermes - Bonsucesso;05/10/2022;AP3
+951;Vicente de Carvalho - Vista Alegre;18/07/2022;AP3
+987;Gardênia Azul - Pechincha;11/07/2022;AP4
+990;Merck - Joatinga;04/07/2022;AP4
+SP852;Campo Grande - Pedra de Guaratiba;01/02/2023;AP5
+SV669;Pavuna - Méier;22/08/2022;AP3
+SV692;Méier - Terminal Alvorada;21/11/2022;AP3-AP4
+SV831;Colônia - Taquara;23/11/2022;AP4
+SV899;Barra de Guaratiba - Terminal Recreio;08/08/2022;AP5-AP4
+SV922;Tubiacanga - Fundão;01/06/2022;AP3
+SVA665;Pavuna - Saens Peña;06/06/2022;AP3-AP2
+SVB665;Pavuna - Saens Peña;01/08/2022;AP3-AP2
+SVB685;Irajá - Méier;04/07/2022;AP3
+SVB901;Bonsucesso - Bananal;16/06/2023;AP3

@@ -1,0 +1,125 @@
+library(flexdashboard)
+library(plotly)
+library(ggplot2)
+library(sf)
+library(readr)
+library(janitor)
+library(rgdal)
+library(readxl)
+library(writexl)
+library(tidyverse)
+library(geobr)
+library(dplyr)
+library(tidyr)
+
+
+rm(list = ls())
+
+# carregando dados
+# Importando o mapa da linhas retornadas
+caminho_arquivo <- "mapa.shp"
+dados_shapefile <- suppressMessages(st_read(dsn = caminho_arquivo, quiet = TRUE))
+
+# Baixando mapa de bairros do Bairros do Rio
+bairros_rj = read_neighborhood() %>% filter(name_muni == 'Rio De Janeiro')
+
+
+# Dados do segundo mapa
+base = read_csv2('linha_reactive.csv') %>% clean_names()
+
+resultado = inner_join(dados_shapefile, base, by = c("servico" = "linha_servico"))
+
+
+
+# baixando dados de linhas reativadas
+#linhas_reativadas = read_csv2('linha_reactive.csv') %>% clean_names()
+
+# Juntando as basess
+#resultado <- inner_join(linhas_reativadas, dados_shapefile, by = c("linha_servico" = "servico"))
+
+# Criando coluna com um unico valor para substituir depois
+dados_shapefile$retorno_linha <- "Linha Fixa"
+
+# linhas
+valores_retornado <- c("10", "12", "14", "104", "157", "201", "229", "254", "277", "301", "311", "349", "388", "435", "448", "518", "519", "603", "605", "626", "651", "652", "669", "678", "702", "709", "741", "743", "753", "757", "778", "785", "808", "809", "817", "822", "825", "830", "831", "833", "842", "845", "849", "851", "865", "870", "871", "880", "881", "885", "892", "893", "899", "901", "915", "921", "922", "925", "928", "951", "987", "990", "SP852", "SV669", "SV692", "SV831", "SV899", "SV922", "SVA665", "SVB665", "SVB685", "SVB901")
+
+# Tratando para reconhecer linhas
+dados_shapefile$retorno_linha[dados_shapefile$servico %in% valores_retornado] <- "Linha Retornada"
+
+# Baixando dados censitarios
+
+rj = read_census_tract(code_tract = 33) %>% filter(name_muni == 'Rio De Janeiro')
+
+# Verificando o tipo de ligação
+crs_rj <- st_crs(rj)
+crs_dados_shapefile <- st_crs(dados_shapefile)
+
+
+# Transformando
+if (crs_rj != crs_dados_shapefile) {
+  rj <- st_transform(rj, crs_dados_shapefile)
+}
+
+
+# criando intersecção 
+interseccao <- st_intersects(rj$geom, dados_shapefile$geometry, sparse = FALSE)
+
+# Cria uma coluna de sinalizador nos dados do setor
+rj$sinalizador <- apply(interseccao, 1, any)
+
+# Criando coluna com base no sinalizado
+rj$proximo <- ifelse(rj$sinalizado == TRUE, "Linha a 500 Metros", "Linha a mais de 500 Metros")
+
+
+cores <- c('#8d2036', 'green')
+
+cores2 <- c('#8d4996', 'yellow')
+
+
+# Somente o mapa -- Buffer
+buffer_500  = ggplot() +
+  geom_sf(data = rj, aes(geometry = geom, fill = proximo), col = 'black', alpha = 0.5, size = 0.5) +
+  geom_sf(data = dados_shapefile, aes(geometry = geometry, color = retorno_linha)) +
+  labs(title = "Mapa de Linhas de Ônibus na Cidade do Rio de Janeiro - Proximidades de Setores Censitários",
+       color = "Retorno de Linha", subtitle = 'Fonte: Data.rio') +
+  scale_color_manual(values = c('#8d2036', 'green')) +  # Define colors manually
+  theme_void() +
+  theme(
+    plot.title = element_text(family = "Arial", size = 18, face = "bold", hjust = 0.5),  # Title configuration
+    plot.subtitle = element_text(family = "Arial", size = 14, face = "italic", hjust = 0.5),  # Subtitle configuration
+    axis.title = element_text(family = "Arial", size = 12, face = "bold"),  # Axis title configuration
+    axis.text = element_text(family = "Arial", size = 10),  # Axis text configuration
+    legend.title = element_text(family = "Arial", size = 12, face = "bold"),  # Legend title configuration
+    legend.text = element_text(family = "Arial", size = 10)+
+      scale_fill_manual(values = cores, name = "Marcadores", labels = c("Ponto Central a mais 500 Metros", "Ponto Central a menos 500 Metros")) +
+      scale_color_manual(values = cores2, name = "Retorno de Linha", labels = c("Linha Fixa", "Linha Retomada")))
+
+buffer_500
+
+
+buffer_500_t <- ggplotly(buffer_500)%>% 
+  style(line = list(width = 0.4))
+
+buffer_500_t
+
+
+buffer_500_t2 <- buffer_500_t %>%
+  layout(
+    legend = list(
+      title = "Novo Título da Legenda",
+      items = list(
+        list(label = "Ponto Central a mais 500 Metros", style = list(fill = "#8d2036")),
+        list(label = "Ponto Central a menos 500 Metros", style = list(fill = "green")),
+        list(label = "Linha Fixa", style = list(color = "black")),
+        list(label = "Linha Retomada", style = list(color = "black", linetype = "dashed"))
+      )
+    )
+  )
+
+
+buffer_500_t2
+
+
+
+
+
