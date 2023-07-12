@@ -70,6 +70,26 @@ rj$sinalizador <- apply(interseccao, 1, any)
 # Criando coluna com base no sinalizado
 rj$proximo <- ifelse(rj$sinalizado == TRUE, "Linha a 500 Metros", "Linha a mais de 500 Metros")
 
+# Definir a centralidade
+rj$centroide <- st_centroid(rj$geom)
+
+# Criar buffer de 500 metros
+# Por favor, note que a unidade do buffer depende do sistema de coordenadas de seus dados.
+# Se seus dados estão em graus (como em WGS84), você deve primeiro transformá-los para um CRS de metros.
+rj_crs_metros <- st_transform(rj, crs = 31983)  # Transformando para um CRS brasileiro em metros (SIRGAS 2000 / UTM zone 23S)
+rj_crs_metros$buffer <- st_buffer(rj_crs_metros$centroide, dist = 500)
+
+# Intersecção do buffer
+# criando intersecção 
+interseccao_buffer <- st_intersects(rj_crs_metros$buffer, dados_shapefile$geometry, sparse = FALSE)
+
+# Cria uma coluna de sinalizador nos dados do setor
+rj$sinalizador_buffer <- apply(interseccao_buffer, 1, any)
+
+# Sinalizador
+rj$analise_sinalizador <- ifelse(rj$sinalizador_buffe == TRUE, "Linha a menos 500 Metros", "Linha a mais de 500 Metros")
+
+
 
 cores <- c('#8d2036', 'green')
 
@@ -78,47 +98,50 @@ cores2 <- c('#8d4996', 'yellow')
 
 # Somente o mapa -- Buffer
 buffer_500  = ggplot() +
-  geom_sf(data = rj, aes(geometry = geom, fill = proximo), col = 'black', alpha = 0.5, size = 0.5) +
+  geom_sf(data = rj, aes(geometry = geom, fill = analise_sinalizador), color = 'black', alpha = 0.5, size = 0.5) +
   geom_sf(data = dados_shapefile, aes(geometry = geometry, color = retorno_linha)) +
   labs(title = "Mapa de Linhas de Ônibus na Cidade do Rio de Janeiro - Proximidades de Setores Censitários",
        color = "Retorno de Linha", subtitle = 'Fonte: Data.rio') +
-  scale_color_manual(values = c('#8d2036', 'green')) +  # Define colors manually
+  scale_color_manual(values = c("green", '#8d2036')) +
   theme_void() +
   theme(
-    plot.title = element_text(family = "Arial", size = 18, face = "bold", hjust = 0.5),  # Title configuration
-    plot.subtitle = element_text(family = "Arial", size = 14, face = "italic", hjust = 0.5),  # Subtitle configuration
-    axis.title = element_text(family = "Arial", size = 12, face = "bold"),  # Axis title configuration
-    axis.text = element_text(family = "Arial", size = 10),  # Axis text configuration
-    legend.title = element_text(family = "Arial", size = 12, face = "bold"),  # Legend title configuration
+    plot.title = element_text(family = "Arial", size = 18, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(family = "Arial", size = 14, face = "italic", hjust = 0.5),
+    axis.title = element_text(family = "Arial", size = 12, face = "bold"), 
+    axis.text = element_text(family = "Arial", size = 10), 
+    legend.title = element_blank(),  
     legend.text = element_text(family = "Arial", size = 10)+
       scale_fill_manual(values = cores, name = "Marcadores", labels = c("Ponto Central a mais 500 Metros", "Ponto Central a menos 500 Metros")) +
       scale_color_manual(values = cores2, name = "Retorno de Linha", labels = c("Linha Fixa", "Linha Retomada")))
 
-buffer_500
 
+verde <- "#008000"       
+vermelho_claro <- "#FFCCCC"   
+# Atualizar as cores na estética do ggplot
+buffer_500 <- buffer_500 +
+  scale_fill_manual(values = c(vermelho_claro, verde))
 
 buffer_500_t <- ggplotly(buffer_500)%>% 
   style(line = list(width = 0.4))
 
-buffer_500_t
+# Plot finat
 
-
-buffer_500_t2 <- buffer_500_t %>%
+buffer_500_t <- buffer_500_t %>%
   layout(
     legend = list(
-      title = "Novo Título da Legenda",
+      title = "",
+      itemsizing = "constant",
+      itemwidth = 60,
       items = list(
-        list(label = "Ponto Central a mais 500 Metros", style = list(fill = "#8d2036")),
-        list(label = "Ponto Central a menos 500 Metros", style = list(fill = "green")),
+        list(label = "Ponto Central a mais 500 Metros", style = list(fill = verde)),
+        list(label = "Ponto Central a menos 500 Metros", style = list(fill = vermelho_claro)),
         list(label = "Linha Fixa", style = list(color = "black")),
         list(label = "Linha Retomada", style = list(color = "black", linetype = "dashed"))
       )
     )
   )
 
-
-buffer_500_t2
-
+buffer_500_t
 
 
 
