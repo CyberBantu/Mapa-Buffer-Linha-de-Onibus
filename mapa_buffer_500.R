@@ -37,6 +37,10 @@ resultado = inner_join(dados_shapefile, base, by = c("servico" = "linha_servico"
 # Juntando as basess
 #resultado <- inner_join(linhas_reativadas, dados_shapefile, by = c("linha_servico" = "servico"))
 
+
+
+# CONSTURINDO A A JUNÇÃO DOS DADOS -------------------------
+
 # Criando coluna com um unico valor para substituir depois
 dados_shapefile$retorno_linha <- "Linha Fixa"
 
@@ -86,8 +90,109 @@ interseccao_buffer <- st_intersects(rj_crs_metros$buffer, dados_shapefile$geomet
 # Cria uma coluna de sinalizador nos dados do setor
 rj$sinalizador_buffer <- apply(interseccao_buffer, 1, any)
 
+# Identificando a quantidade de linhas -----------------------
+# Para cada buffer, identifique as linhas de ônibus que o intersectam
+linhas_por_buffer <- lapply(1:length(rj_crs_metros$buffer), function(i) {
+  intersecting_lines <- st_intersects(rj_crs_metros$buffer[[i]], dados_shapefile)
+  dados_shapefile$servico[unlist(intersecting_lines)]
+})
+
+# Adicione essa informação ao dataframe rj_crs_metros
+rj_crs_metros$linhas_servico <- linhas_por_buffer
+
+# Para obter a contagem de linhas por buffer, simplesmente aplique a função length a cada elemento de linhas_servico
+rj_crs_metros$num_linhas <- sapply(linhas_por_buffer, length)
+
+# Agora, para cada linha em rj_crs_metros, você tem uma lista de linhas de ônibus que passam por seu buffer,
+# bem como o número total dessas linhas
+
+
 # Sinalizador
 rj$analise_sinalizador <- ifelse(rj$sinalizador_buffe == TRUE, "Linha a menos 500 Metros", "Linha a mais de 500 Metros")
+
+
+
+rj_crs_metros$linhas_servico <- linhas_por_buffer
+
+# lengh para ver para observar o total de linhas
+rj_crs_metros$num_linhas <- sapply(linhas_por_buffer, length)
+
+# PASSANDO OS DADOS PARA CSV
+
+
+
+# Mapa quantidade de linhas proximas a 500 do setor sensitário
+
+# Saber valor maximo e minimo
+min(rj_crs_metros$num_linhas)
+
+# Numero maximo
+max(rj_crs_metros$num_linhas)
+
+# Intervalos
+breaks = seq(0, 299, by = 299/5)
+
+breaks = round(breaks)
+
+
+# Criar categorias
+rj_crs_metros$categoria_num_linhas = cut(rj_crs_metros$num_linhas, 
+                                         breaks = breaks, 
+                                         include.lowest = TRUE)
+
+# Ajustar os rótulos para refletir os limites das categorias
+levels(rj_crs_metros$categoria_num_linhas) = paste(head(breaks, -1),'a', tail(breaks, -1), 'linhas')
+
+
+
+rj_crs_metros <- rj_crs_metros %>%
+  mutate(linhas_servico = gsub(pattern = "\\(c\\)|\\(|\\)", replacement = "", x = linhas_servico))
+
+
+# pLOTANDO O GRAFICO
+
+p <- ggplot(data = rj_crs_metros) +
+  geom_sf(aes(geometry = geom, fill = categoria_num_linhas)) +
+  geom_sf(data = dados_shapefile, aes(geometry = geometry, fill = retorno_linha))+
+  scale_fill_brewer(palette = "RdYlGn") +
+  labs(title = 'Linhas a 500 metros do Setor Censitário na Cidade do Rio de Janeiro', 
+       subtitle = 'Fonte - IBGE / Data.rio')
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+p_interativo = ggplotly(p)
+
+p_interativo
+
+# Mapa de escala continua --------------------------------
+# Criação do gráfico com ggplot2
+g = ggplot(data = rj_crs_metros) +
+  geom_sf(aes(geometry = geom, fill = num_linhas, text = paste("Número de Linhas: ", num_linhas, "<br>", 
+                                                               "Linhas de Serviço: ", linhas_servico))) +
+  scale_fill_gradient(low = "white", high = "darkgreen") + 
+  theme_minimal() +
+  theme(legend.position = "bottom") 
+
+# Adicionando interatividade com plotly
+g_interativo = ggplotly(g, tooltip = "text")
+
+
+g_interativo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
