@@ -105,9 +105,7 @@ rj_crs_metros$linhas_servico <- linhas_por_buffer
 # lengh para ver para observar o total de linhas
 rj_crs_metros$num_linhas <- sapply(linhas_por_buffer, length)
 
-# PASSANDO OS DADOS PARA CSV
 
-readr::write_csv(rj_crs_metros, "rj_crs_metros.csv")
 
 
 # Mapa quantidade de linhas proximas a 500 do setor sensitário
@@ -254,54 +252,6 @@ rj_crs_metros$cat_setores_proximos <- ifelse(rj_crs_metros$num_setores_proximos 
 
 # MApa de proximidade -------------------------------------------------@@@@@@@@@@@@@@@@@@@@@@@@@@#################
 # COdigo final ------------------------------------------------
-
-
-paleta <- c("0 a 2" = "#FF0000",  # Vermelho mais forte
-            "2 a 4" = "#FF5500",  # Vermelho-alaranjado
-            "4 a 6" = "#FFAA00",  # Laranja
-            "6 a 8" = "#FFFF00",  # Amarelo
-            "8 a 10" = "#FFFF99", # Branco
-            "Acima de 10" = "#FFFFFF") # Branco
-
-
-rj_crs_metros$tooltip_text <- paste("Número de Linhas: ", rj_crs_metros$num_linhas, "<br>", 
-                                    "Linhas de Serviço: ", rj_crs_metros$linhas_servico, "<br>",
-                                    "Setores Proximos: ", rj_crs_metros$num_setores_proximos, "<br>",
-                                    'Bairro:', rj_crs_metros$name_neighborhood)
-
-
-proximidade <- ggplot(data = rj_crs_metros) +
-  geom_sf(aes(geometry = geom, fill = categoria_num_linhas, col =  cat_setores_proximos, text = paste("Número de Linhas: ", num_linhas, "<br>", 
-                                                                         "Linhas de Serviço: ", linhas_servico,
-                                                                         'Setores Proximos: ', num_setores_proximos)), lwd = 0.1) +
-  theme_minimal() +
-  theme(legend.position = "bottom") +
-  labs(title = "Linhas de Ônibus Municipais a 500 Metros dos Setores Censitários no Rio de Janeiro",
-       fill = "Quantidade de Linhas",
-       caption = "Fonte: Prefeitura do Rio de Janeiro") +
-  scale_fill_manual(values = paleta, guide = guide_legend(title.position = "top",
-                                                          title.hjust = 0.5,
-                                                          title.theme = element_text(size = 12, face = "bold"),
-                                                          label.theme = element_text(size = 10))) +
-  scale_color_manual(values = c('pink', 'black'))+
-  theme(plot.title = element_text(size = 14, face = "bold"),
-        plot.caption = element_text(size = 10),
-        legend.title.align = 0.5,
-        legend.text = element_text(size = 10),
-        legend.key.size = unit(1, "cm"))
-
-
-
-
-proximidade <- ggplotly(proximidade, tooltip = 'text')
-
-# Ajustar layout do plot interativo
-proximidade <- proximidade %>%
-  layout(title = list(text = "<b>Linhas de Ônibus Municipais a 500 Metros dos Setores Censitários no Rio de Janeiro</b>",
-                      x = 0.5),
-         margin = list(l = 50, r = 50, t = 80, b = 50))
-proximidade
-
 
 
 
