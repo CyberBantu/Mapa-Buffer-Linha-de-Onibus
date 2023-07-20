@@ -101,6 +101,7 @@ linhas_por_buffer <- lapply(1:length(rj_crs_metros$buffer), function(i) {
 # Adicione essa informação ao dataframe rj_crs_metros
 rj_crs_metros$linhas_servico <- linhas_por_buffer
 
+
 # lengh para ver para observar o total de linhas
 rj_crs_metros$num_linhas <- sapply(linhas_por_buffer, length)
 
@@ -224,8 +225,6 @@ g_interativo
 
 # Identificando setores censitários proximos
 
-install.packages('purrr')
-
 library(sf)
 library(purrr)
 
@@ -255,6 +254,7 @@ rj_crs_metros$cat_setores_proximos <- ifelse(rj_crs_metros$num_setores_proximos 
 
 # MApa de proximidade -------------------------------------------------@@@@@@@@@@@@@@@@@@@@@@@@@@#################
 # COdigo final ------------------------------------------------
+
 
 paleta <- c("0 a 2" = "#FF0000",  # Vermelho mais forte
             "2 a 4" = "#FF5500",  # Vermelho-alaranjado
@@ -306,7 +306,7 @@ proximidade
 
 
 # Mapa de Fator Critico ----------------------------------------------------------------
-rj_crs_metros$critico <- ifelse(rj_crs_metros$num_linhas < 3 & rj_crs_metros$num_setores_proximos > 10, "critico", "não critico")
+rj_crs_metros$critico <- ifelse((rj_crs_metros$num_linhas < 3 & rj_crs_metros$num_setores_proximos > 7), "critico", "não critico")
 
 
 
@@ -323,7 +323,7 @@ critico <- ggplot(data = rj_crs_metros) +
   theme_minimal() +
   theme(legend.position = "bottom") +
   labs(title = "Setores Classificados como críticos na Distribuição de Ônibus do Rio de Janeiro",
-       fill = "Quantidade de Linhas",
+       fill = "Estado dos setores",
        caption = "Fonte: Prefeitura do Rio de Janeiro") +
   scale_fill_manual(values = paleta, guide = guide_legend(title.position = "top",
                                                           title.hjust = 0.5,
