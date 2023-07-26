@@ -84,21 +84,21 @@ rj_crs_metros$buffer_250 <- st_buffer(rj_crs_metros$centroide, dist = 250)
 
 # Intersecção do buffer --------------------------
 # criando intersecção 
-interseccao_buffer <- st_intersects(rj_crs_metros$buffer, dados_shapefile$geometry, sparse = FALSE)
+interseccao_buffer <- st_intersects(rj_crs_metros$buffer_250, dados_shapefile$geometry, sparse = FALSE)
 
 # Cria uma coluna de sinalizador nos dados do setor
 rj$sinalizador_buffer <- apply(interseccao_buffer, 1, any)
 
 # Sinalizador
-rj$analise_sinalizador <- ifelse(rj$sinalizador_buffe == TRUE, "Linha a menos 500 Metros", "Linha a mais de 500 Metros")
+rj$analise_sinalizador <- ifelse(rj$sinalizador_buffer == TRUE, "Linha a menos 500 Metros", "Linha a mais de 500 Metros")
 
 # Linha proximas 
-linhas_por_buffer <- lapply(1:length(rj_crs_metros$buffer), function(i) {
-  intersecting_lines <- st_intersects(rj_crs_metros$buffer[[i]], dados_shapefile)
+linhas_por_buffer <- lapply(1:length(rj_crs_metros$buffer_250), function(i) {
+  intersecting_lines <- st_intersects(rj_crs_metros$buffer_250[[i]], dados_shapefile)
   dados_shapefile$servico[unlist(intersecting_lines)]
 })
 
-# Adicione essa informação ao dataframe rj_crs_metros
+\# Adicione essa informação ao dataframe rj_crs_metros
 rj_crs_metros$linhas_servico <- linhas_por_buffer
 
 
@@ -133,10 +133,10 @@ levels(rj_crs_metros$categoria_num_linhas) = paste(head(breaks, -1),'a', tail(br
 
 # Plotando prototipo de mapa
 
-linhas_por_buffer = lapply(1:length(rj_crs_metros$buffer), function(i) {
-  intersecting_lines = st_intersects(rj_crs_metros$buffer[[i]], dados_shapefile)
-  dados_shapefile$servico[unlist(intersecting_lines)]
-})
+#linhas_por_buffer = lapply(1:length(rj_crs_metros$buffer), function(i) {
+ # intersecting_lines = st_intersects(rj_crs_metros$buffer[[i]], dados_shapefile)
+ # dados_shapefile$servico[unlist(intersecting_lines)]
+#})
 
 # Adicione essa informação ao dataframe rj_crs_metros
 rj_crs_metros$linhas_servico = linhas_por_buffer
@@ -250,7 +250,7 @@ rj_crs_metros$cat_setores_proximos <- ifelse(rj_crs_metros$num_setores_proximos 
 
 
 
-# MApa de proximidade -------------------------------------------------@@@@@@@@@@@@@@@@@@@@@@@@@@#################
+# MApa de proximidade -------------------------------------------------
 # COdigo final ------------------------------------------------
 
 
